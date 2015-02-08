@@ -78,7 +78,7 @@ function logins_callback(logins) {
         for (var i = 0; i < logins.length; i++) {
             usernames.push(logins[i].Name + " - " + logins[i].Login);
         }
-        chrome.extension.sendRequest({
+        chrome.extension.sendMessage({
             'action': 'select_login',
             'args': [usernames]
         });
@@ -91,13 +91,13 @@ function fillLogin(u, p) {
     var action = document.location.origin;
     if (form)
         action = form.action;
-    chrome.extension.sendRequest({
+    chrome.extension.sendMessage({
         'action': 'get_passwords',
         'args': [ document.location.origin, action ]
     }, function(logins) {
         if (logins.length == 0) {
             var message = "No logins found";
-            chrome.extension.sendRequest({ action: 'alert', args: [message] });
+            chrome.extension.sendMessage({ action: 'alert', args: [message] });
             return;
         }
         if (logins.length == 1) {
@@ -113,13 +113,13 @@ function fillLogin(u, p) {
             for (var i = 0; i < logins.length; i++) {
                 usernames.push(logins[i].Name + " - " + logins[i].Login);
             }
-            chrome.extension.sendRequest({
+            chrome.extension.sendMessage({
                 'action': 'select_login',
                 'args': [usernames, true]
             });
             var message = "More than one login was found in KeePass, " +
                     "press the ChromeIPass icon for more options";
-            chrome.extension.sendRequest({ action: 'alert', args: [message] });
+            chrome.extension.sendMessage({ action: 'alert', args: [message] });
         }
     });
 }
@@ -152,7 +152,7 @@ function fillInPassOnly() {
         p = getFields(p, null)[1];
     if (!p) {
         var message = "Unable to find a password field";
-        chrome.extension.sendRequest({
+        chrome.extension.sendMessage({
             action: 'alert',
             args: [message]
         });
@@ -160,7 +160,7 @@ function fillInPassOnly() {
     }
     fillLogin(null, p);
 }
-chrome.extension.onRequest.addListener(function onRequest(req) {
+chrome.extension.onMessage.addListener(function onRequest(req) {
     if ('id' in req) {
         if (_u)
             _u.value = _logins[req.id].Login;
@@ -179,7 +179,7 @@ chrome.extension.onRequest.addListener(function onRequest(req) {
 });
 
 if (passwordinputs.length == 0) {
-    chrome.extension.sendRequest({
+    chrome.extension.sendMessage({
         'action': 'hide_actions'
     });
 } else if (passwordinputs.length == 1) {
@@ -191,12 +191,12 @@ if (passwordinputs.length == 0) {
         // potential security issue if the real form action points elsewhere
         action = document.location.origin;
     }
-    chrome.extension.sendRequest({
+    chrome.extension.sendMessage({
         'action': 'get_passwords',
         'args': [ document.location.origin, action ]
     }, logins_callback);
 } else if (passwordinputs.length > 1) {
-    chrome.extension.sendRequest({
+    chrome.extension.sendMessage({
         'action': 'select_field'
     });
 }

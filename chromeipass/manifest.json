@@ -6,11 +6,13 @@
     "16": "keepass.png",
     "48": "keepass-big.png"
   },
-  "page_action": {
+  "browser_action":{
     "default_icon": "keepass.png",
-    "popup": "popup.html"
+    "default_popup":"popup.html"
   },
-  "background_page": "background.html",
+  "background": {
+    "page": "background.html"
+  },
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
@@ -21,5 +23,6 @@
   ],
   "permissions": [
     "contextMenus", "tabs", "http://localhost/"
-  ]
+  ],
+  "manifest_version": 2
 }
